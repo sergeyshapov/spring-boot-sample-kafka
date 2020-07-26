@@ -1,0 +1,26 @@
+spring:
+  cloud:
+    function:
+      definition: gsm1,gsm2
+      routing-expression: headers['gsm']
+    stream:
+      function:
+        routing:
+          enabled: true
+        definition: transform;sendTestData;receive;gsm1;gsm2;functionRouter
+      bindings:
+        transform-out-0:
+          destination: xformed
+        receive-in-0:
+          destination: xformed
+        transform-in-0:
+          destination: testtock
+        sendTestData-out-0:
+          destination: testinput
+        functionRouter-in-0:
+          binder: kafka
+          destination: testinput
+          consumer:
+            durableSubscription: true
+            concurrency: 1
+            autoCommitOffset: true
